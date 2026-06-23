@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#FAFAFA">
   <title>Calculadora INSS de Obra</title>
+  <script src="https://cdn.jsdelivr.net/npm/disable-devtool"></script>
+  <script>
+    DisableDevtool({
+      disableMenu: true,
+      clearIntervalTime: 1000,
+      ondevtoolopen: function() {
+        document.body.innerHTML = '';
+        window.location.reload();
+      }
+    });
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -30,7 +41,7 @@
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding: 0 16px;
+      padding: 32px 0;
     }
 
     /* ── WRAPPER ── */
@@ -41,33 +52,33 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      background: #fff;
+      padding: 0 20px;
     }
 
     /* ── HEADER ── */
     .form-header {
       flex-shrink: 0;
-      padding: 20px 0 0;
+      padding: 0;
     }
 
     .header-top {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .header-icon {
-      width: 32px;
-      height: 32px;
-      background: var(--black);
-      border-radius: 8px;
+      background-color: #0B1752;
+      background-image: url(https://ppf.desaeng.com.br/wp-content/uploads/2025/11/BG-Hero-Desktop-Sem-Cleyton.jpg);
+      background-position: center left;
+      background-size: 160%;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      padding: 36px 20px;
+      margin: 0 -20px;
+      margin-bottom: 14px;
     }
 
-    .header-icon svg { display: block; }
+    .header-top img {
+      height: 70px;
+      display: block;
+    }
 
     .header-label {
       font-size: 13px;
@@ -140,15 +151,16 @@
     .btn-continuar {
       flex: 1;
       padding: 15px 16px;
-      background: var(--black);
-      color: var(--white);
+      background: #FFB600;
+      color: #0B1752;
       border: none;
-      border-radius: 12px;
+      border-radius: 1000px;
       font-family: 'Inter', sans-serif;
       font-size: 15px;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
       transition: opacity 0.2s, transform 0.1s;
+      box-shadow: 0 6px 20px 0 rgba(255,182,0,0.35);
     }
 
     .btn-continuar:hover  { opacity: 0.88; transform: translateY(-1px); }
@@ -325,28 +337,9 @@
       align-items: end;
     }
 
+    .fields-row > * { min-width: 0; }
+
     /* ── RESULT STEP ── */
-    .result-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #e8f5d0;
-      color: #4a7300;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 5px 12px;
-      border-radius: 20px;
-    }
-
-    .result-pill::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      background: var(--green);
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
     .result-main-title {
       font-size: 19px;
       font-weight: 600;
@@ -383,41 +376,40 @@
       margin-top: 4px;
     }
 
-    /* eco box — economia */
+    /* eco box — economia (info secundária) */
     .eco-box {
-      background: #f0f7e3;
-      border: 1.5px solid #c4e07a;
-      border-radius: 14px;
-      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #fff;
+      border: 1px solid var(--gray-lt);
+      border-radius: 10px;
     }
 
     .eco-box-label {
-      font-size: 11px;
-      font-weight: 500;
-      color: #4a7300;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--gray-mid);
     }
 
     .eco-box-row {
       display: flex;
-      align-items: flex-end;
-      gap: 10px;
+      align-items: center;
+      gap: 6px;
     }
 
     .eco-box-value {
-      font-size: 28px;
-      font-weight: 700;
-      color: #3d6200;
-      letter-spacing: -0.5px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--black);
     }
 
     .eco-box-pct {
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 12px;
+      font-weight: 500;
       color: var(--green);
-      padding-bottom: 4px;
     }
 
     /* result cards row */
@@ -508,6 +500,20 @@
       border-bottom: 1px solid #f0f0f0;
     }
 
+    /* disclaimer */
+    .result-disclaimer {
+      font-size: 13px;
+      color: var(--gray-mid);
+      line-height: 1.6;
+      font-weight: 300;
+      margin-top: -8px;
+    }
+
+    .result-disclaimer strong {
+      color: var(--black);
+      font-weight: 500;
+    }
+
     /* note */
     .result-note {
       font-size: 12px;
@@ -516,15 +522,64 @@
       font-weight: 300;
     }
 
+    /* plan box — INSS com planejamento (destaque principal) */
+    .plan-box {
+      background: #f0f7e3;
+      border: 1.5px solid #c4e07a;
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .plan-box-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #4a7300;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .plan-box-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #3d6200;
+      letter-spacing: -0.5px;
+    }
+    .plan-box-sub {
+      font-size: 12px;
+      color: #6a9a10;
+      margin-top: 4px;
+    }
+
+    /* dec box — decadência */
+    .dec-box {
+      background: #eef2ff;
+      border: 1.5px solid #a5b4fc;
+      border-radius: 14px;
+      padding: 14px 18px;
+    }
+    .dec-box-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #3730a3;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .dec-box-text {
+      font-size: 13px;
+      color: #4338ca;
+      line-height: 1.5;
+    }
+
     /* result animations */
-    .result-ready .result-pill      { animation: resultFadeUp 0.4s ease-out 0s    both; }
-    .result-ready .result-main-title{ animation: resultFadeUp 0.45s ease-out 0.06s both; }
-    .result-ready .money-box        { animation: resultFadeUp 0.45s ease-out 0.12s both; }
-    .result-ready .eco-box          { animation: resultFadeUp 0.45s ease-out 0.20s both; }
-    .result-ready .result-cards     { animation: resultFadeUp 0.45s ease-out 0.28s both; }
-    .result-ready .eco-bar-wrap     { animation: resultFadeUp 0.4s ease-out 0.36s both; }
-    .result-ready .detail-list      { animation: resultFadeUp 0.4s ease-out 0.44s both; }
-    .result-ready .result-note      { animation: resultFadeUp 0.4s ease-out 0.52s both; }
+    .result-ready .result-main-title  { animation: resultFadeUp 0.4s ease-out 0s    both; }
+    .result-ready .result-disclaimer  { animation: resultFadeUp 0.4s ease-out 0.06s both; }
+    .result-ready .dec-box            { animation: resultFadeUp 0.4s ease-out 0.10s both; }
+    .result-ready .money-box          { animation: resultFadeUp 0.45s ease-out 0.14s both; }
+    .result-ready .plan-box           { animation: resultFadeUp 0.45s ease-out 0.22s both; }
+    .result-ready .eco-box            { animation: resultFadeUp 0.45s ease-out 0.30s both; }
+    .result-ready .eco-bar-wrap       { animation: resultFadeUp 0.4s ease-out 0.38s both; }
+    .result-ready .detail-list        { animation: resultFadeUp 0.4s ease-out 0.46s both; }
+    .result-ready .result-note        { animation: resultFadeUp 0.4s ease-out 0.54s both; }
 
     @keyframes resultFadeUp {
       from { opacity: 0; transform: translateY(16px); }
@@ -551,15 +606,7 @@
   <!-- HEADER -->
   <div class="form-header" id="formHeader">
     <div class="header-top">
-      <div class="header-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M2 14L8 2L14 14H2Z" fill="#FAFAFA" stroke="#FAFAFA" stroke-width="0.5"/>
-        </svg>
-      </div>
-      <span class="header-label">INSS de Obra</span>
-    </div>
-    <div class="progress-bar-wrap" id="progressWrap">
-      <div class="progress-bar" id="progressBar"></div>
+      <img src="https://ppf.desaeng.com.br/wp-content/uploads/2025/10/PPF-Logo-Branco.webp" alt="PPF">
     </div>
   </div>
 
@@ -662,6 +709,33 @@
           <button class="option-btn" data-group="concreto" data-value="1">Sim</button>
         </div>
       </div>
+
+      <!-- Período da obra -->
+      <div>
+        <label class="field-label">Período da obra <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:11px">(opcional — aplica decadência)</span></label>
+        <div class="fields-row">
+          <div>
+            <label class="field-label">Início</label>
+            <input id="obraInicio" type="month" class="field-input">
+          </div>
+          <div>
+            <label class="field-label">Término</label>
+            <input id="obraFim" type="month" class="field-input">
+          </div>
+        </div>
+      </div>
+
+      <!-- Dados do lead -->
+      <div>
+        <label class="field-label">Seus dados</label>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <input id="leadNome" type="text" class="field-input" placeholder="Nome completo">
+          <div class="fields-row">
+            <input id="leadTel" type="tel" class="field-input" placeholder="Telefone / WhatsApp">
+            <input id="leadEmail" type="email" class="field-input" placeholder="E-mail">
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ── STEP 1: LOADING ── -->
@@ -676,9 +750,14 @@
     <!-- ── STEP 2: RESULTADO ── -->
     <div class="step" data-step="2" id="stepResult">
 
-      <div class="result-pill">Simulação Estimada</div>
-
       <h2 class="result-main-title" id="r-title">Sua estimativa de INSS</h2>
+
+      <p class="result-disclaimer">Valores calculados com base na tabela oficial VAU (Jun/2026). O valor exato depende de auditoria técnica — <strong>um especialista pode reduzir ainda mais o que você paga.</strong></p>
+
+      <div class="dec-box" id="decBox" style="display:none">
+        <div class="dec-box-label" id="dec-tipo">—</div>
+        <div class="dec-box-text" id="dec-texto">—</div>
+      </div>
 
       <div class="money-box glow">
         <div class="money-box-label">INSS sem planejamento</div>
@@ -686,22 +765,17 @@
         <div class="money-box-sub" id="r-v0-sub">Valor cobrado pela Receita Federal</div>
       </div>
 
+      <div class="plan-box">
+        <div class="plan-box-label">INSS com planejamento</div>
+        <div class="plan-box-value" id="r-v3">—</div>
+        <div class="plan-box-sub" id="r-rr">—</div>
+      </div>
+
       <div class="eco-box">
-        <div class="eco-box-label">Economia estimada com planejamento</div>
+        <div class="eco-box-label">Você economiza</div>
         <div class="eco-box-row">
           <div class="eco-box-value" id="r-eco">—</div>
           <div class="eco-box-pct" id="r-pct">—</div>
-        </div>
-      </div>
-
-      <div class="result-cards">
-        <div class="result-card">
-          <div class="result-card-label">INSS com planejamento</div>
-          <div class="result-card-value" id="r-v3">—</div>
-        </div>
-        <div class="result-card">
-          <div class="result-card-label">Redução aplicada</div>
-          <div class="result-card-value" id="r-rr">—</div>
         </div>
       </div>
 
@@ -744,6 +818,10 @@
         <div class="detail-item" id="d-conc-row" style="display:none">
           <span class="detail-item-label">Dedução concreto usinado</span>
           <span class="detail-item-val" id="d-conc">—</span>
+        </div>
+        <div class="detail-item" id="d-dec-row" style="display:none">
+          <span class="detail-item-label">Abatimento decadência</span>
+          <span class="detail-item-val" id="d-dec">—</span>
         </div>
       </div>
 
@@ -848,6 +926,25 @@ function fatorSocial(area, tipoPessoa) {
 
 function reducRatio(area) { return area <= 350 ? 0.27174 : 0.38043; }
 
+function calcDecadencia(inicioStr, fimStr) {
+  if (!inicioStr || !fimStr) return { tipo: 'sem-data', fator: 1 };
+  const inicio = new Date(inicioStr + '-01');
+  const fim    = new Date(fimStr    + '-01');
+  if (fim < inicio) return { tipo: 'sem-data', fator: 1 };
+  const today = new Date();
+  const totalMeses = (fim.getFullYear() - inicio.getFullYear()) * 12
+    + (fim.getMonth() - inicio.getMonth()) + 1;
+  let decadentes = 0;
+  for (let m = 0; m < totalMeses; m++) {
+    const d = new Date(inicio.getFullYear(), inicio.getMonth() + m, 1);
+    // prazo: Jan 1 do ano seguinte ao mês + 5 anos = ano+6
+    if (new Date(d.getFullYear() + 6, 0, 1) <= today) decadentes++;
+  }
+  if (decadentes >= totalMeses) return { tipo: 'total',   fator: 0, decadentes, totalMeses };
+  if (decadentes === 0)         return { tipo: 'nenhuma', fator: 1, decadentes, totalMeses };
+  return { tipo: 'parcial', fator: (totalMeses - decadentes) / totalMeses, decadentes, totalMeses };
+}
+
 function fmt(v) {
   return v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
 }
@@ -870,9 +967,6 @@ function goToStep(n) {
   next.classList.add('active');
   document.getElementById('stepContent').scrollTop = 0;
 
-  const pct = Math.min(n, PROGRESS_MAX_STEP) / PROGRESS_MAX_STEP * 100;
-  document.getElementById('progressBar').style.width = pct + '%';
-
   const btnBack = document.getElementById('btnBack');
   const btnCont = document.getElementById('btnContinuar');
   const footer  = document.getElementById('stepFooter');
@@ -887,7 +981,7 @@ function goToStep(n) {
     footer.style.display = 'none';
     setTimeout(() => goToStep(2), 1600);
   } else {
-    btnCont.textContent = 'Recalcular';
+    btnCont.textContent = 'Falar com especialista';
     btnCont.className = 'btn-continuar';
     footer.style.display = 'flex';
     renderResults();
@@ -917,9 +1011,34 @@ document.getElementById('btnContinuar').addEventListener('click', () => {
       document.getElementById('state').focus();
       return;
     }
+    const lead = {
+      nome:      document.getElementById('leadNome').value.trim(),
+      telefone:  document.getElementById('leadTel').value.trim(),
+      email:     document.getElementById('leadEmail').value.trim(),
+      estado:    state,
+      area_principal: main,
+      area_comp: parseFloat(document.getElementById('compArea').value) || 0,
+      tipoPessoa:  answers.tipoPessoa,
+      destinacao:  answers.destination,
+      tipo_obra:   answers.tipo,
+      concreto_usinado: answers.concreto === '1',
+      obra_inicio: document.getElementById('obraInicio').value || null,
+      obra_fim:    document.getElementById('obraFim').value    || null,
+    };
+    console.log('[Lead] Dados do simulador:', lead);
     goToStep(1);
-  } else {
-    goToStep(0);
+  } else if (cur === 2) {
+    // "Falar com especialista" — wire up WhatsApp / CRM aqui
+    const state = document.getElementById('state').value;
+    const main  = parseFloat(document.getElementById('mainArea').value) || 0;
+    console.log('[Lead] Clicou em Falar com especialista:', {
+      nome:     document.getElementById('leadNome').value.trim(),
+      telefone: document.getElementById('leadTel').value.trim(),
+      email:    document.getElementById('leadEmail').value.trim(),
+      estado: state, area: main,
+      tipoPessoa: answers.tipoPessoa,
+      destinacao: answers.destination,
+    });
   }
 });
 
@@ -954,11 +1073,35 @@ function renderResults() {
     concDeducao = (codMain + codComp) * (CONCRETO[state][dest] / 100) * 0.05;
   }
 
-  const v0  = (rmt - concDeducao) * inssR;
+  const v0base = (rmt - concDeducao) * inssR;
+
+  // Decadência
+  const dec = calcDecadencia(
+    document.getElementById('obraInicio').value,
+    document.getElementById('obraFim').value
+  );
+  const v0  = v0base * dec.fator;
   const rr  = reducRatio(main);
   const v3  = v0 * rr;
   const eco = v0 - v3;
-  const pct = (eco / v0) * 100;
+  const pct = v0 > 0 ? (eco / v0) * 100 : 0;
+
+  // Dec-box
+  const decBox = document.getElementById('decBox');
+  if (dec.tipo === 'total') {
+    document.getElementById('dec-tipo').textContent = 'Decadência Total — INSS Extinto';
+    document.getElementById('dec-texto').textContent =
+      'A obra foi concluída há mais de 5 anos. Pelo Art. 173 do CTN, o direito de cobrança pela Receita Federal caducou. Com documentação adequada, o INSS vai a zero.';
+    decBox.style.display = 'block';
+  } else if (dec.tipo === 'parcial') {
+    const pctDec = ((dec.decadentes / dec.totalMeses) * 100).toFixed(0);
+    document.getElementById('dec-tipo').textContent = 'Decadência Parcial Aplicada';
+    document.getElementById('dec-texto').textContent =
+      `${dec.decadentes} de ${dec.totalMeses} meses da obra já caducaram (${pctDec}% abatido). O INSS foi calculado proporcionalmente sobre o período ainda dentro do prazo legal.`;
+    decBox.style.display = 'block';
+  } else {
+    decBox.style.display = 'none';
+  }
 
   // Título dinâmico
   document.getElementById('r-title').textContent =
@@ -970,13 +1113,23 @@ function renderResults() {
   document.getElementById('r-eco').textContent = fmt(eco);
   document.getElementById('r-pct').textContent = pct.toFixed(1).replace('.',',') + '%';
   document.getElementById('r-v3').textContent  = fmt(v3);
-  document.getElementById('r-rr').textContent  = main <= 350 ? '≤ 350m²: −72,8%' : '> 350m²: −61,9%';
+  document.getElementById('r-rr').textContent  = main <= 350 ? 'Redução aplicada: −72,8%' : 'Redução aplicada: −61,9%';
   document.getElementById('r-bar-pct').textContent = pct.toFixed(1).replace('.',',') + '%';
 
   // Barra (delay para animação)
   setTimeout(() => {
     document.getElementById('r-bar').style.width = Math.min(pct, 100).toFixed(1) + '%';
   }, 500);
+
+  // Decadência no detalhamento
+  const decRow = document.getElementById('d-dec-row');
+  if (dec.tipo === 'total' || dec.tipo === 'parcial') {
+    const pctAbat = ((1 - dec.fator) * 100).toFixed(1).replace('.',',');
+    document.getElementById('d-dec').textContent = `−${pctAbat}% (${dec.decadentes}/${dec.totalMeses} meses)`;
+    decRow.style.display = 'flex';
+  } else {
+    decRow.style.display = 'none';
+  }
 
   // Detalhamento
   document.getElementById('d-vau').textContent   = fmt(vau) + '/m²';
