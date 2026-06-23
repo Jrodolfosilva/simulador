@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FAFAFA">
+  <title>Calculadora INSS de Obra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black:    #0E0E0E;
+      --white:    #FAFAFA;
+      --gray-mid: #737373;
+      --green:    #67A500;
+      --gray-lt:  #e0e0e0;
+      --alert-bg: #FDE8E8;
+      --alert-red:#c0392b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--black);
+      background: var(--white);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 0 16px;
+    }
+
+    /* ── WRAPPER ── */
+    .form-wrapper {
+      width: 100%;
+      max-width: 400px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── HEADER ── */
+    .form-header {
+      flex-shrink: 0;
+      padding: 20px 0 0;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .header-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--black);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .header-icon svg { display: block; }
+
+    .header-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--black);
+      letter-spacing: -0.2px;
+    }
+
+    .progress-bar-wrap {
+      height: 3px;
+      background: var(--gray-lt);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--black);
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.4s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    /* ── STEP CONTENT ── */
+    .step-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 0 24px;
+    }
+
+    .step {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .step.active { display: flex; }
+
+    /* ── STEP FOOTER ── */
+    .step-footer {
+      flex-shrink: 0;
+      padding: 12px 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-back {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      background: transparent;
+      border: 1.5px solid var(--gray-lt);
+      border-radius: 12px;
+      font-size: 22px;
+      line-height: 1;
+      color: var(--black);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .btn-back:hover { border-color: var(--gray-mid); background: #f2f2f2; }
+
+    .btn-continuar {
+      flex: 1;
+      padding: 15px 16px;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn-continuar:hover  { opacity: 0.88; transform: translateY(-1px); }
+    .btn-continuar:active { opacity: 1;    transform: translateY(0); }
+    .btn-continuar.green  { background: var(--green); }
+
+    /* ── FORM ELEMENTS ── */
+    .step-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      line-height: 1.3;
+    }
+
+    .step-sub {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--gray-mid);
+      line-height: 1.6;
+      margin-top: -8px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    /* option buttons */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .option-btn {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      padding: 11px 16px;
+      background: #fff;
+      border: 1.5px solid var(--gray-lt);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--black);
+      flex: 1;
+      min-width: 0;
+      text-align: left;
+    }
+
+    .option-btn::before {
+      content: '';
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gray-lt);
+      flex-shrink: 0;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    }
+
+    .option-btn:hover    { border-color: var(--gray-mid); background: #f2f2f2; }
+    .option-btn:hover::before { border-color: var(--gray-mid); }
+
+    .option-btn.selected { border-color: var(--black); background: #ebebeb; font-weight: 500; }
+    .option-btn.selected::before {
+      border-color: var(--black);
+      background: var(--black);
+      box-shadow: inset 0 0 0 3px #ebebeb;
+    }
+
+    /* loading step */
+    .loading-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 60px 0;
+      text-align: center;
+    }
+
+    .loading-spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid var(--gray-lt);
+      border-top-color: var(--black);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--black);
+      letter-spacing: -0.2px;
+    }
+
+    .loading-sub {
+      font-size: 13px;
+      color: var(--gray-mid);
+      font-weight: 300;
+    }
+
+    /* select input */
+    .select-wrap {
+      position: relative;
+    }
+
+    .select-wrap::after {
+      content: '↓';
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      font-size: 12px;
+      color: var(--gray-mid);
+    }
+
+    .field-select {
+      width: 100%;
+      padding: 12px 40px 12px 14px;
+      background: #fff;
+      border: 1.5px solid var(--gray-lt);
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--black);
+      outline: none;
+      appearance: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .field-select:focus { border-color: var(--black); }
+
+    .field-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: #fff;
+      border: 1.5px solid var(--gray-lt);
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--black);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .field-input:focus { border-color: var(--black); }
+
+    .fields-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: end;
+    }
+
+    /* ── RESULT STEP ── */
+    .result-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #e8f5d0;
+      color: #4a7300;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    .result-pill::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .result-main-title {
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      line-height: 1.3;
+    }
+
+    /* money box — INSS sem planejamento */
+    .money-box {
+      background: var(--alert-bg);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .money-box-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--alert-red);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .money-box-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--alert-red);
+      letter-spacing: -0.5px;
+    }
+
+    .money-box-sub {
+      font-size: 12px;
+      color: #c0392b99;
+      margin-top: 4px;
+    }
+
+    /* eco box — economia */
+    .eco-box {
+      background: #f0f7e3;
+      border: 1.5px solid #c4e07a;
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .eco-box-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #4a7300;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .eco-box-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .eco-box-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #3d6200;
+      letter-spacing: -0.5px;
+    }
+
+    .eco-box-pct {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--green);
+      padding-bottom: 4px;
+    }
+
+    /* result cards row */
+    .result-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .result-card {
+      background: #fff;
+      border: 1.5px solid var(--gray-lt);
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .result-card-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--gray-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .result-card-value {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--black);
+      letter-spacing: -0.3px;
+    }
+
+    /* eco bar */
+    .eco-bar-wrap { }
+    .eco-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--gray-mid);
+      margin-bottom: 6px;
+    }
+    .eco-bar-track {
+      height: 6px;
+      background: var(--gray-lt);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .eco-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4a7300, var(--green));
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    /* detail list */
+    .detail-list {
+      background: #fff;
+      border: 1.5px solid var(--gray-lt);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 13px;
+    }
+
+    .detail-item:last-child { border-bottom: none; }
+
+    .detail-item-label { color: var(--gray-mid); font-weight: 400; }
+    .detail-item-val   { color: var(--black);    font-weight: 500; }
+
+    .detail-header {
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #f7f7f7;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    /* note */
+    .result-note {
+      font-size: 12px;
+      color: var(--gray-mid);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* result animations */
+    .result-ready .result-pill      { animation: resultFadeUp 0.4s ease-out 0s    both; }
+    .result-ready .result-main-title{ animation: resultFadeUp 0.45s ease-out 0.06s both; }
+    .result-ready .money-box        { animation: resultFadeUp 0.45s ease-out 0.12s both; }
+    .result-ready .eco-box          { animation: resultFadeUp 0.45s ease-out 0.20s both; }
+    .result-ready .result-cards     { animation: resultFadeUp 0.45s ease-out 0.28s both; }
+    .result-ready .eco-bar-wrap     { animation: resultFadeUp 0.4s ease-out 0.36s both; }
+    .result-ready .detail-list      { animation: resultFadeUp 0.4s ease-out 0.44s both; }
+    .result-ready .result-note      { animation: resultFadeUp 0.4s ease-out 0.52s both; }
+
+    @keyframes resultFadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes resultMoneyGlow {
+      0%   { box-shadow: 0 0 0 0    rgba(192,57,43,0.3); }
+      60%  { box-shadow: 0 0 0 12px rgba(192,57,43,0); }
+      100% { box-shadow: 0 0 0 0    rgba(192,57,43,0); }
+    }
+
+    .money-box.glow { animation: resultMoneyGlow 1.2s ease-out 0.3s both; }
+
+    @media (max-width: 400px) {
+      .fields-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-wrapper">
+
+  <!-- HEADER -->
+  <div class="form-header" id="formHeader">
+    <div class="header-top">
+      <div class="header-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 14L8 2L14 14H2Z" fill="#FAFAFA" stroke="#FAFAFA" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <span class="header-label">INSS de Obra</span>
+    </div>
+    <div class="progress-bar-wrap" id="progressWrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+
+  <!-- STEP CONTENT -->
+  <div class="step-content" id="stepContent">
+
+    <!-- ── STEP 0: FORMULÁRIO ── -->
+    <div class="step active" data-step="0">
+      <div>
+        <h2 class="step-title">Calcule seu INSS de Obra</h2>
+        <p class="step-sub">Preencha os dados para estimar o impacto financeiro da sua construção.</p>
+      </div>
+
+      <!-- Tipo de pessoa -->
+      <div>
+        <label class="field-label">Tipo de pessoa</label>
+        <div class="options-grid">
+          <button class="option-btn selected" data-group="tipoPessoa" data-value="PF">Pessoa Física</button>
+          <button class="option-btn" data-group="tipoPessoa" data-value="PJ">Pessoa Jurídica</button>
+          <button class="option-btn" data-group="tipoPessoa" data-value="PJs">PJ — Simples Nacional</button>
+        </div>
+      </div>
+
+      <!-- Destinação -->
+      <div>
+        <label class="field-label">Destinação da obra</label>
+        <div class="options-grid">
+          <button class="option-btn selected" data-group="destination" data-value="uni">Residencial Unifamiliar</button>
+          <button class="option-btn" data-group="destination" data-value="multi">Residencial Multifamiliar</button>
+          <button class="option-btn" data-group="destination" data-value="com">Comercial</button>
+          <button class="option-btn" data-group="destination" data-value="gal">Galpão Industrial</button>
+          <button class="option-btn" data-group="destination" data-value="pop">Casa Popular</button>
+          <button class="option-btn" data-group="destination" data-value="conj">Conj. Hab. Popular</button>
+        </div>
+      </div>
+
+      <!-- Tipo de construção -->
+      <div>
+        <label class="field-label">Tipo de construção</label>
+        <div class="options-row">
+          <button class="option-btn selected" data-group="tipo" data-value="alvenaria">Alvenaria</button>
+          <button class="option-btn" data-group="tipo" data-value="madeira">Madeira / Mista</button>
+        </div>
+      </div>
+
+      <!-- Estado -->
+      <div>
+        <label class="field-label">Estado</label>
+        <div class="select-wrap">
+          <select id="state" class="field-select">
+            <option value="">Selecione o estado</option>
+            <option value="AC">AC — Acre</option>
+            <option value="AL">AL — Alagoas</option>
+            <option value="AM">AM — Amazonas</option>
+            <option value="AP">AP — Amapá</option>
+            <option value="BA">BA — Bahia</option>
+            <option value="CE">CE — Ceará</option>
+            <option value="DF">DF — Distrito Federal</option>
+            <option value="ES">ES — Espírito Santo</option>
+            <option value="GO">GO — Goiás</option>
+            <option value="MA">MA — Maranhão</option>
+            <option value="MG">MG — Minas Gerais</option>
+            <option value="MS">MS — Mato Grosso do Sul</option>
+            <option value="MT">MT — Mato Grosso</option>
+            <option value="PA">PA — Pará</option>
+            <option value="PB">PB — Paraíba</option>
+            <option value="PE">PE — Pernambuco</option>
+            <option value="PI">PI — Piauí</option>
+            <option value="PR">PR — Paraná</option>
+            <option value="RJ">RJ — Rio de Janeiro</option>
+            <option value="RN">RN — Rio Grande do Norte</option>
+            <option value="RO">RO — Rondônia</option>
+            <option value="RR">RR — Roraima</option>
+            <option value="RS">RS — Rio Grande do Sul</option>
+            <option value="SC" selected>SC — Santa Catarina</option>
+            <option value="SE">SE — Sergipe</option>
+            <option value="SP">SP — São Paulo</option>
+            <option value="TO">TO — Tocantins</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Áreas -->
+      <div class="fields-row">
+        <div>
+          <label class="field-label">Área de construção (m²)</label>
+          <input id="mainArea" type="number" class="field-input" min="1" max="99999" step="1" placeholder="Ex: 200" value="200">
+        </div>
+        <div>
+          <label class="field-label">Área complement. coberta (m²)</label>
+          <input id="compArea" type="number" class="field-input" min="0" max="99999" step="1" placeholder="Ex: 0" value="0">
+        </div>
+      </div>
+
+      <!-- Concreto usinado -->
+      <div>
+        <label class="field-label">Usa concreto usinado?</label>
+        <div class="options-row">
+          <button class="option-btn selected" data-group="concreto" data-value="0">Não</button>
+          <button class="option-btn" data-group="concreto" data-value="1">Sim</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 1: LOADING ── -->
+    <div class="step" data-step="1" id="stepLoading">
+      <div class="loading-wrap">
+        <div class="loading-spinner"></div>
+        <p class="loading-title">Calculando seu INSS...</p>
+        <p class="loading-sub">Aplicando tabela VAU e fator social</p>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: RESULTADO ── -->
+    <div class="step" data-step="2" id="stepResult">
+
+      <div class="result-pill">Simulação Estimada</div>
+
+      <h2 class="result-main-title" id="r-title">Sua estimativa de INSS</h2>
+
+      <div class="money-box glow">
+        <div class="money-box-label">INSS sem planejamento</div>
+        <div class="money-box-value" id="r-v0">—</div>
+        <div class="money-box-sub" id="r-v0-sub">Valor cobrado pela Receita Federal</div>
+      </div>
+
+      <div class="eco-box">
+        <div class="eco-box-label">Economia estimada com planejamento</div>
+        <div class="eco-box-row">
+          <div class="eco-box-value" id="r-eco">—</div>
+          <div class="eco-box-pct" id="r-pct">—</div>
+        </div>
+      </div>
+
+      <div class="result-cards">
+        <div class="result-card">
+          <div class="result-card-label">INSS com planejamento</div>
+          <div class="result-card-value" id="r-v3">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-card-label">Redução aplicada</div>
+          <div class="result-card-value" id="r-rr">—</div>
+        </div>
+      </div>
+
+      <div class="eco-bar-wrap">
+        <div class="eco-bar-labels">
+          <span>Economia sobre o valor original</span>
+          <span id="r-bar-pct">—</span>
+        </div>
+        <div class="eco-bar-track">
+          <div class="eco-bar-fill" id="r-bar"></div>
+        </div>
+      </div>
+
+      <div class="detail-list">
+        <div class="detail-header">Detalhamento do cálculo</div>
+        <div class="detail-item">
+          <span class="detail-item-label">VAU (R$/m²)</span>
+          <span class="detail-item-val" id="d-vau">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item-label">Equivalência</span>
+          <span class="detail-item-val" id="d-equiv">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item-label">Fator social (%MO)</span>
+          <span class="detail-item-val" id="d-fs">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item-label">Alíquota tipo obra</span>
+          <span class="detail-item-val" id="d-aliq">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item-label">Taxa INSS</span>
+          <span class="detail-item-val" id="d-inss">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-item-label">RMT (remuneração MO)</span>
+          <span class="detail-item-val" id="d-rmt">—</span>
+        </div>
+        <div class="detail-item" id="d-conc-row" style="display:none">
+          <span class="detail-item-label">Dedução concreto usinado</span>
+          <span class="detail-item-val" id="d-conc">—</span>
+        </div>
+      </div>
+
+      <p class="result-note">
+        Fórmula baseada na IN RFB nº 2021/2021. VAU de referência: Jun/2026.
+        Com o <strong>Fator de Ajuste</strong>, é possível reduzir legalmente o INSS apresentando a composição real de custos da obra.
+        Obras ≤ 350m² reduzem ~73% · obras &gt; 350m² reduzem ~62%.
+        Valores reais dependem do VAU vigente e de auditoria técnica.
+      </p>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="step-footer" id="stepFooter">
+    <button class="btn-back" id="btnBack" aria-label="Voltar">‹</button>
+    <button class="btn-continuar" id="btnContinuar">Calcular INSS</button>
+  </div>
+
+</div>
+
+<script>
+// ── DADOS ──────────────────────────────────────────────────────────────────
+
+const VAU = {
+  AC:{ uni:4158.89, multi:3515.14, com:3892.71, gal:1799.60, pop:2101.27, conj:2101.27 },
+  AL:{ uni:2508.03, multi:2161.41, com:2417.67, gal:1129.27, pop:1335.68, conj:1335.68 },
+  AM:{ uni:4158.89, multi:3515.14, com:3892.71, gal:1799.60, pop:2101.27, conj:2101.27 },
+  AP:{ uni:3310.74, multi:2924.06, com:3319.57, gal:1577.98, pop:1864.89, conj:1864.89 },
+  BA:{ uni:2698.70, multi:2261.81, com:2590.48, gal:1175.31, pop:1458.57, conj:1458.57 },
+  CE:{ uni:2821.88, multi:2450.48, com:2789.25, gal:1321.36, pop:1662.48, conj:1662.48 },
+  DF:{ uni:2847.00, multi:2466.95, com:2823.17, gal:1262.68, pop:1557.39, conj:1557.39 },
+  ES:{ uni:3336.46, multi:2838.58, com:3163.18, gal:1433.38, pop:1878.94, conj:1878.94 },
+  GO:{ uni:2790.08, multi:2329.40, com:2651.89, gal:1239.30, pop:1488.43, conj:1488.43 },
+  MA:{ uni:2302.53, multi:2202.45, com:2249.07, gal:1073.19, pop:1286.82, conj:1286.82 },
+  MG:{ uni:2989.71, multi:2593.71, com:2912.20, gal:1281.12, pop:1680.14, conj:1680.14 },
+  MS:{ uni:2208.68, multi:1849.99, com:2299.42, gal:1036.54, pop:1267.25, conj:1267.25 },
+  MT:{ uni:3928.77, multi:3414.37, com:3879.89, gal:1706.19, pop:2178.73, conj:2178.73 },
+  PA:{ uni:2860.05, multi:2498.41, com:2812.95, gal:1330.23, pop:1622.88, conj:1622.88 },
+  PB:{ uni:2056.84, multi:1822.69, com:2048.85, gal: 941.67, pop:1113.11, conj:1113.11 },
+  PE:{ uni:2744.41, multi:2295.17, com:2604.69, gal:1191.99, pop:1522.61, conj:1522.61 },
+  PI:{ uni:2302.53, multi:1985.74, com:2249.07, gal:1073.19, pop:1286.82, conj:1286.82 },
+  PR:{ uni:3274.50, multi:2789.12, com:3189.32, gal:1429.50, pop:1791.47, conj:1791.47 },
+  RJ:{ uni:3040.24, multi:2617.25, com:2976.87, gal:1351.68, pop:1697.80, conj:1697.80 },
+  RN:{ uni:2599.15, multi:2231.45, com:2483.19, gal:1193.78, pop:1500.89, conj:1500.89 },
+  RO:{ uni:2900.46, multi:2639.32, com:2985.08, gal:1330.96, pop:1704.92, conj:1704.92 },
+  RR:{ uni:3610.16, multi:3094.22, com:3525.23, gal:1689.77, pop:1875.87, conj:1875.87 },
+  RS:{ uni:3399.08, multi:3009.20, com:3568.52, gal:1384.66, pop:1818.31, conj:1818.31 },
+  SC:{ uni:3429.46, multi:2910.02, com:3343.86, gal:1546.85, pop:1955.79, conj:1955.79 },
+  SE:{ uni:2480.88, multi:2247.24, com:2516.85, gal:1157.20, pop:1359.52, conj:1359.52 },
+  SP:{ uni:2652.20, multi:2313.20, com:2633.27, gal:1240.58, pop:1487.36, conj:1487.36 },
+  TO:{ uni:2770.41, multi:2312.98, com:2633.19, gal:1230.56, pop:1477.94, conj:1477.94 },
+};
+
+const CONCRETO = {
+  AC:{ uni:7.43, multi:9.61, com:13.33, gal:4.52, pop:0, conj:0 },
+  AL:{ uni:6.11, multi:8.12, com:11.35, gal:3.82, pop:0, conj:0 },
+  AM:{ uni:7.43, multi:9.61, com:13.33, gal:4.52, pop:0, conj:0 },
+  AP:{ uni:7.48, multi:9.41, com:12.93, gal:4.38, pop:0, conj:0 },
+  BA:{ uni:5.53, multi:7.46, com:10.31, gal:3.62, pop:0, conj:0 },
+  CE:{ uni:5.72, multi:7.69, com:10.69, gal:3.44, pop:0, conj:0 },
+  DF:{ uni:5.24, multi:7.06, com:9.62,  gal:3.43, pop:0, conj:0 },
+  ES:{ uni:5.15, multi:6.85, com:9.45,  gal:3.26, pop:0, conj:0 },
+  GO:{ uni:5.79, multi:7.62, com:10.27, gal:3.60, pop:0, conj:0 },
+  MA:{ uni:6.94, multi:8.73, com:12.06, gal:4.07, pop:0, conj:0 },
+  MG:{ uni:4.68, multi:6.22, com:8.66,  gal:3.05, pop:0, conj:0 },
+  MS:{ uni:6.74, multi:8.74, com:12.20, gal:4.28, pop:0, conj:0 },
+  MT:{ uni:6.22, multi:8.01, com:10.96, gal:3.89, pop:0, conj:0 },
+  PA:{ uni:7.58, multi:9.77, com:13.48, gal:4.45, pop:0, conj:0 },
+  PB:{ uni:6.32, multi:8.58, com:11.81, gal:3.81, pop:0, conj:0 },
+  PE:{ uni:5.12, multi:6.89, com:9.74,  gal:3.42, pop:0, conj:0 },
+  PI:{ uni:5.33, multi:7.16, com:10.00, gal:3.30, pop:0, conj:0 },
+  PR:{ uni:4.91, multi:6.50, com:8.78,  gal:3.08, pop:0, conj:0 },
+  RJ:{ uni:4.94, multi:6.52, com:9.02,  gal:3.08, pop:0, conj:0 },
+  RN:{ uni:5.96, multi:7.62, com:10.41, gal:3.63, pop:0, conj:0 },
+  RO:{ uni:6.22, multi:8.01, com:10.96, gal:3.89, pop:0, conj:0 },
+  RR:{ uni:7.43, multi:9.61, com:13.33, gal:4.52, pop:0, conj:0 },
+  RS:{ uni:5.01, multi:6.54, com:8.77,  gal:3.23, pop:0, conj:0 },
+  SC:{ uni:4.79, multi:6.19, com:8.36,  gal:2.87, pop:0, conj:0 },
+  SE:{ uni:6.97, multi:9.05, com:12.50, gal:4.18, pop:0, conj:0 },
+  SP:{ uni:4.90, multi:6.35, com:8.69,  gal:2.96, pop:0, conj:0 },
+  TO:{ uni:5.33, multi:7.16, com:10.00, gal:3.30, pop:0, conj:0 },
+};
+
+const EQUIV   = { uni:89, multi:90, com:86, gal:95, pop:98, conj:98 };
+const ALIQUOTA = { alvenaria:0.20, madeira:0.15 };
+const INSS_RATE = { PF:0.368, PJ:0.368, PJs:0.31 };
+
+const DEST_LABELS = {
+  uni:'Residencial Unifamiliar', multi:'Residencial Multifamiliar',
+  com:'Comercial', gal:'Galpão Industrial', pop:'Casa Popular', conj:'Conj. Hab. Popular',
+};
+
+function fatorSocial(area, tipoPessoa) {
+  if (tipoPessoa !== 'PF') return 1.0;
+  if (area <= 100) return 0.20;
+  if (area <= 200) return 0.40;
+  if (area <= 300) return 0.55;
+  if (area <= 400) return 0.70;
+  return 0.90;
+}
+
+function reducRatio(area) { return area <= 350 ? 0.27174 : 0.38043; }
+
+function fmt(v) {
+  return v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+}
+
+function pctStr(v) { return (v * 100).toFixed(1).replace('.',',') + '%'; }
+
+// ── ESTADO ─────────────────────────────────────────────────────────────────
+
+const answers = { tipoPessoa:'PF', destination:'uni', tipo:'alvenaria', concreto:'0' };
+
+// ── NAVEGAÇÃO ──────────────────────────────────────────────────────────────
+
+const BACK_STEPS = new Set([2]);
+const PROGRESS_MAX_STEP = 2;
+
+function goToStep(n) {
+  document.querySelector('.step.active')?.classList.remove('active');
+  const next = document.querySelector(`.step[data-step="${n}"]`);
+  if (!next) return;
+  next.classList.add('active');
+  document.getElementById('stepContent').scrollTop = 0;
+
+  const pct = Math.min(n, PROGRESS_MAX_STEP) / PROGRESS_MAX_STEP * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+
+  const btnBack = document.getElementById('btnBack');
+  const btnCont = document.getElementById('btnContinuar');
+  const footer  = document.getElementById('stepFooter');
+
+  btnBack.style.display = BACK_STEPS.has(n) ? 'flex' : 'none';
+
+  if (n === 0) {
+    btnCont.textContent = 'Calcular INSS';
+    btnCont.className = 'btn-continuar';
+    footer.style.display = 'flex';
+  } else if (n === 1) {
+    footer.style.display = 'none';
+    setTimeout(() => goToStep(2), 1600);
+  } else {
+    btnCont.textContent = 'Recalcular';
+    btnCont.className = 'btn-continuar';
+    footer.style.display = 'flex';
+    renderResults();
+  }
+}
+
+// ── OPÇÃO BUTTONS ──────────────────────────────────────────────────────────
+
+document.querySelectorAll('.option-btn[data-group]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const group = btn.dataset.group;
+    document.querySelectorAll(`.option-btn[data-group="${group}"]`)
+      .forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answers[group] = btn.dataset.value;
+  });
+});
+
+// ── FOOTER BUTTONS ─────────────────────────────────────────────────────────
+
+document.getElementById('btnContinuar').addEventListener('click', () => {
+  const cur = parseInt(document.querySelector('.step.active').dataset.step, 10);
+  if (cur === 0) {
+    const state = document.getElementById('state').value;
+    const main  = parseFloat(document.getElementById('mainArea').value) || 0;
+    if (!state || main <= 0) {
+      document.getElementById('state').focus();
+      return;
+    }
+    goToStep(1);
+  } else {
+    goToStep(0);
+  }
+});
+
+document.getElementById('btnBack').addEventListener('click', () => {
+  goToStep(0);
+});
+
+// ── CÁLCULO E RENDER DE RESULTADOS ─────────────────────────────────────────
+
+function renderResults() {
+  const state    = document.getElementById('state').value;
+  const main     = parseFloat(document.getElementById('mainArea').value) || 0;
+  const comp     = parseFloat(document.getElementById('compArea').value) || 0;
+  const dest     = answers.destination;
+  const tipoPessoa = answers.tipoPessoa;
+  const tipo     = answers.tipo;
+  const useConc  = answers.concreto === '1';
+
+  const vau      = VAU[state][dest];
+  const equiv    = EQUIV[dest] / 100;
+  const aliq     = ALIQUOTA[tipo];
+  const inssR    = INSS_RATE[tipoPessoa];
+  const areaTotal = main + comp;
+  const fs        = fatorSocial(areaTotal, tipoPessoa);
+
+  const codMain  = main * equiv * vau;
+  const codComp  = comp * equiv * vau * 0.50;
+  const rmt      = (codMain + codComp) * fs * aliq;
+
+  let concDeducao = 0;
+  if (useConc && CONCRETO[state]) {
+    concDeducao = (codMain + codComp) * (CONCRETO[state][dest] / 100) * 0.05;
+  }
+
+  const v0  = (rmt - concDeducao) * inssR;
+  const rr  = reducRatio(main);
+  const v3  = v0 * rr;
+  const eco = v0 - v3;
+  const pct = (eco / v0) * 100;
+
+  // Título dinâmico
+  document.getElementById('r-title').textContent =
+    `${DEST_LABELS[dest]} · ${main}m² · ${state}`;
+
+  // Resultados
+  document.getElementById('r-v0').textContent  = fmt(v0);
+  document.getElementById('r-v0-sub').textContent = `${state} · ${DEST_LABELS[dest]}`;
+  document.getElementById('r-eco').textContent = fmt(eco);
+  document.getElementById('r-pct').textContent = pct.toFixed(1).replace('.',',') + '%';
+  document.getElementById('r-v3').textContent  = fmt(v3);
+  document.getElementById('r-rr').textContent  = main <= 350 ? '≤ 350m²: −72,8%' : '> 350m²: −61,9%';
+  document.getElementById('r-bar-pct').textContent = pct.toFixed(1).replace('.',',') + '%';
+
+  // Barra (delay para animação)
+  setTimeout(() => {
+    document.getElementById('r-bar').style.width = Math.min(pct, 100).toFixed(1) + '%';
+  }, 500);
+
+  // Detalhamento
+  document.getElementById('d-vau').textContent   = fmt(vau) + '/m²';
+  document.getElementById('d-equiv').textContent = EQUIV[dest] + '%';
+  document.getElementById('d-fs').textContent    = pctStr(fs) + (tipoPessoa === 'PF' ? ` (${areaTotal}m²)` : ' (PJ)');
+  document.getElementById('d-aliq').textContent  = pctStr(aliq) + (tipo === 'alvenaria' ? ' (alvenaria)' : ' (madeira/mista)');
+  document.getElementById('d-inss').textContent  = pctStr(inssR) + (tipoPessoa === 'PJs' ? ' (Simples)' : '');
+  document.getElementById('d-rmt').textContent   = fmt(rmt);
+
+  const concRow = document.getElementById('d-conc-row');
+  if (useConc && concDeducao > 0) {
+    document.getElementById('d-conc').textContent = '−' + fmt(concDeducao);
+    concRow.style.display = 'flex';
+  } else {
+    concRow.style.display = 'none';
+  }
+
+  // Trigger animations
+  const stepEl = document.getElementById('stepResult');
+  stepEl.classList.remove('result-ready');
+  void stepEl.offsetWidth; // reflow
+  stepEl.classList.add('result-ready');
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+
+goToStep(0);
+</script>
+</body>
+</html>
