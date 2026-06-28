@@ -594,6 +594,61 @@
 
     .money-box.glow { animation: resultMoneyGlow 1.2s ease-out 0.3s both; }
 
+    /* ── ENCARGOS BOX ── */
+    .enc-box {
+      background: #fff8e6;
+      border: 1.5px solid #f5c842;
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .enc-box-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #8a6000;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .enc-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      padding: 5px 0;
+      border-bottom: 1px solid #f0e0a0;
+    }
+    .enc-item:last-of-type { border-bottom: none; margin-bottom: 10px; }
+    .enc-item span:first-child { color: #8a6000; font-weight: 400; }
+    .enc-item span:last-child  { color: #5a3e00; font-weight: 500; }
+    .enc-total-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #8a6000;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 12px;
+      border-top: 1.5px solid #f5c842;
+      padding-top: 10px;
+    }
+    .enc-total-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: #5a3e00;
+      letter-spacing: -0.4px;
+      margin-top: 4px;
+    }
+    .enc-selic-tag {
+      font-size: 11px;
+      color: #a07800;
+      margin-top: 3px;
+    }
+
+    .field-input:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: #f5f5f5;
+    }
+
     @media (max-width: 400px) {
       .fields-row { grid-template-columns: 1fr; }
     }
@@ -690,24 +745,9 @@
       </div>
 
       <!-- Áreas -->
-      <div class="fields-row">
-        <div>
-          <label class="field-label">Área de construção (m²)</label>
-          <input id="mainArea" type="number" class="field-input" min="1" max="99999" step="1" placeholder="Ex: 200" value="200">
-        </div>
-        <div>
-          <label class="field-label">Área complement. coberta (m²)</label>
-          <input id="compArea" type="number" class="field-input" min="0" max="99999" step="1" placeholder="Ex: 0" value="0">
-        </div>
-      </div>
-
-      <!-- Concreto usinado -->
       <div>
-        <label class="field-label">Usa concreto usinado?</label>
-        <div class="options-row">
-          <button class="option-btn selected" data-group="concreto" data-value="0">Não</button>
-          <button class="option-btn" data-group="concreto" data-value="1">Sim</button>
-        </div>
+        <label class="field-label">Área de construção (m²)</label>
+        <input id="mainArea" type="number" class="field-input" min="1" max="99999" step="1" placeholder="Ex: 200" value="200">
       </div>
 
       <!-- Período da obra -->
@@ -716,11 +756,11 @@
         <div class="fields-row">
           <div>
             <label class="field-label">Início</label>
-            <input id="obraInicio" type="month" class="field-input">
+            <input id="obraInicio" type="month" class="field-input" min="1990-01">
           </div>
           <div>
             <label class="field-label">Término</label>
-            <input id="obraFim" type="month" class="field-input">
+            <input id="obraFim" type="month" class="field-input" disabled>
           </div>
         </div>
       </div>
@@ -736,6 +776,28 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- ── STEP 3: FORA DO PERFIL (área < 100m²) ── -->
+    <div class="step" data-step="3" id="stepDesqualificado">
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;padding:32px 0 12px;">
+        <div style="width:64px;height:64px;border-radius:50%;background:#FDE8E8;display:flex;align-items:center;justify-content:center;font-size:28px;">🙏</div>
+        <h2 class="step-title" style="font-size:22px;">Agradecemos o seu interesse!</h2>
+      </div>
+      <p class="step-sub" style="text-align:center;font-size:14px;line-height:1.7;color:var(--gray-mid);">
+        Infelizmente, <strong style="color:var(--black);">não podemos seguir com o seu atendimento</strong> neste momento.
+      </p>
+      <div style="background:#f7f7f7;border-radius:14px;padding:20px 18px;border:1.5px solid var(--gray-lt);">
+        <p style="font-size:13px;color:var(--gray-mid);line-height:1.7;margin:0;">
+          Nosso serviço é voltado para obras a partir de <strong style="color:var(--black);">100 m²</strong>. Sua obra está abaixo do critério mínimo de atendimento.
+        </p>
+        <p style="font-size:13px;color:var(--gray-mid);line-height:1.7;margin:12px 0 0;">
+          Caso tenha alguma dúvida, entre em contato conosco pelos nossos canais de atendimento.
+        </p>
+      </div>
+      <p style="font-size:12px;color:var(--gray-mid);text-align:center;line-height:1.6;">
+        Deseja corrigir a área informada?
+      </p>
     </div>
 
     <!-- ── STEP 1: LOADING ── -->
@@ -763,6 +825,28 @@
         <div class="money-box-label">INSS sem planejamento</div>
         <div class="money-box-value" id="r-v0">—</div>
         <div class="money-box-sub" id="r-v0-sub">Valor cobrado pela Receita Federal</div>
+      </div>
+
+      <!-- encargos mora (visível só se obra já iniciada) -->
+      <div id="encargos-box" style="display:none">
+        <div class="enc-box">
+          <div class="enc-box-label">Encargos por falta de planejamento</div>
+          <div class="enc-item">
+            <span>Multa (25% sobre INSS)</span>
+            <span id="e-multa">—</span>
+          </div>
+          <div class="enc-item">
+            <span>Correção SELIC (<span id="e-meses">—</span> meses)</span>
+            <span id="e-corr">—</span>
+          </div>
+          <div class="enc-item">
+            <span>Mora (<span id="e-meses2">—</span> × R$100)</span>
+            <span id="e-mora">—</span>
+          </div>
+          <div class="enc-total-label">Total real sem planejamento</div>
+          <div class="enc-total-value" id="e-total">—</div>
+          <div class="enc-selic-tag" id="e-selic-tag">SELIC: —</div>
+        </div>
       </div>
 
       <div class="plan-box">
@@ -815,10 +899,6 @@
           <span class="detail-item-label">RMT (remuneração MO)</span>
           <span class="detail-item-val" id="d-rmt">—</span>
         </div>
-        <div class="detail-item" id="d-conc-row" style="display:none">
-          <span class="detail-item-label">Dedução concreto usinado</span>
-          <span class="detail-item-val" id="d-conc">—</span>
-        </div>
         <div class="detail-item" id="d-dec-row" style="display:none">
           <span class="detail-item-label">Abatimento decadência</span>
           <span class="detail-item-val" id="d-dec">—</span>
@@ -844,6 +924,18 @@
 </div>
 
 <script>
+// ── SELIC ──────────────────────────────────────────────────────────────────
+
+let selicAnual = 0.25; // fallback 25% a.a.
+
+fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.4189/dados/ultimos/1?formato=json')
+  .then(r => r.json())
+  .then(data => {
+    const v = parseFloat(data[0].valor.replace(',', '.'));
+    if (!isNaN(v)) selicAnual = v / 100;
+  })
+  .catch(() => {});
+
 // ── DADOS ──────────────────────────────────────────────────────────────────
 
 const VAU = {
@@ -915,6 +1007,27 @@ const DEST_LABELS = {
   com:'Comercial', gal:'Galpão Industrial', pop:'Casa Popular', conj:'Conj. Hab. Popular',
 };
 
+function calcEncargos(v0, inicioStr, fimStr) {
+  if (!inicioStr) return null;
+  const hoje   = new Date();
+  const inicio = new Date(inicioStr + '-01');
+  if (inicio > hoje) return null;
+  let fim = fimStr ? new Date(fimStr + '-01') : hoje;
+  if (fim > hoje) fim = hoje;
+  const meses = Math.round(
+    (fim.getFullYear() - inicio.getFullYear()) * 12 +
+    (fim.getMonth()   - inicio.getMonth())
+  );
+  if (meses <= 0) return null;
+  const multa          = v0 * 0.25;
+  const monthlyRate    = selicAnual / 12;
+  const selicAcum      = Math.pow(1 + monthlyRate, meses) - 1;
+  const correcao       = v0 * 0.25 * selicAcum;
+  const mora           = meses * 100;
+  const total          = v0 + multa + correcao + mora;
+  return { multa, correcao, mora, total, meses, selicAcum };
+}
+
 function fatorSocial(area, tipoPessoa) {
   if (tipoPessoa !== 'PF') return 1.0;
   if (area <= 100) return 0.20;
@@ -953,7 +1066,7 @@ function pctStr(v) { return (v * 100).toFixed(1).replace('.',',') + '%'; }
 
 // ── ESTADO ─────────────────────────────────────────────────────────────────
 
-const answers = { tipoPessoa:'PF', destination:'uni', tipo:'alvenaria', concreto:'0' };
+const answers = { tipoPessoa:'PF', destination:'uni', tipo:'alvenaria' };
 
 // ── NAVEGAÇÃO ──────────────────────────────────────────────────────────────
 
@@ -980,6 +1093,10 @@ function goToStep(n) {
   } else if (n === 1) {
     footer.style.display = 'none';
     setTimeout(() => goToStep(2), 1600);
+  } else if (n === 3) {
+    btnCont.textContent = 'Voltar e corrigir área';
+    btnCont.className = 'btn-continuar';
+    footer.style.display = 'flex';
   } else {
     btnCont.textContent = 'Falar com especialista';
     btnCont.className = 'btn-continuar';
@@ -987,6 +1104,21 @@ function goToStep(n) {
     renderResults();
   }
 }
+
+// ── OBRA INÍCIO → habilita FIM ─────────────────────────────────────────────
+
+document.getElementById('obraInicio').addEventListener('input', function () {
+  const fimEl = document.getElementById('obraFim');
+  if (this.value) {
+    fimEl.disabled = false;
+    fimEl.min = this.value;
+    if (fimEl.value && fimEl.value < this.value) fimEl.value = '';
+  } else {
+    fimEl.disabled = true;
+    fimEl.value = '';
+    fimEl.min = '';
+  }
+});
 
 // ── OPÇÃO BUTTONS ──────────────────────────────────────────────────────────
 
@@ -1011,22 +1143,26 @@ document.getElementById('btnContinuar').addEventListener('click', () => {
       document.getElementById('state').focus();
       return;
     }
+    if (main < 100) {
+      goToStep(3);
+      return;
+    }
     const lead = {
       nome:      document.getElementById('leadNome').value.trim(),
       telefone:  document.getElementById('leadTel').value.trim(),
       email:     document.getElementById('leadEmail').value.trim(),
       estado:    state,
       area_principal: main,
-      area_comp: parseFloat(document.getElementById('compArea').value) || 0,
       tipoPessoa:  answers.tipoPessoa,
       destinacao:  answers.destination,
       tipo_obra:   answers.tipo,
-      concreto_usinado: answers.concreto === '1',
       obra_inicio: document.getElementById('obraInicio').value || null,
       obra_fim:    document.getElementById('obraFim').value    || null,
     };
     console.log('[Lead] Dados do simulador:', lead);
     goToStep(1);
+  } else if (cur === 3) {
+    goToStep(0);
   } else if (cur === 2) {
     // "Falar com especialista" — wire up WhatsApp / CRM aqui
     const state = document.getElementById('state').value;
@@ -1051,12 +1187,10 @@ document.getElementById('btnBack').addEventListener('click', () => {
 function renderResults() {
   const state    = document.getElementById('state').value;
   const main     = parseFloat(document.getElementById('mainArea').value) || 0;
-  const comp     = parseFloat(document.getElementById('compArea').value) || 0;
+  const comp     = 0;
   const dest     = answers.destination;
   const tipoPessoa = answers.tipoPessoa;
   const tipo     = answers.tipo;
-  const useConc  = answers.concreto === '1';
-
   const vau      = VAU[state][dest];
   const equiv    = EQUIV[dest] / 100;
   const aliq     = ALIQUOTA[tipo];
@@ -1068,12 +1202,7 @@ function renderResults() {
   const codComp  = comp * equiv * vau * 0.50;
   const rmt      = (codMain + codComp) * fs * aliq;
 
-  let concDeducao = 0;
-  if (useConc && CONCRETO[state]) {
-    concDeducao = (codMain + codComp) * (CONCRETO[state][dest] / 100) * 0.05;
-  }
-
-  const v0base = (rmt - concDeducao) * inssR;
+  const v0base = rmt * inssR;
 
   // Decadência
   const dec = calcDecadencia(
@@ -1139,12 +1268,24 @@ function renderResults() {
   document.getElementById('d-inss').textContent  = pctStr(inssR) + (tipoPessoa === 'PJs' ? ' (Simples)' : '');
   document.getElementById('d-rmt').textContent   = fmt(rmt);
 
-  const concRow = document.getElementById('d-conc-row');
-  if (useConc && concDeducao > 0) {
-    document.getElementById('d-conc').textContent = '−' + fmt(concDeducao);
-    concRow.style.display = 'flex';
+  // Encargos por mora
+  const enc = calcEncargos(v0,
+    document.getElementById('obraInicio').value,
+    document.getElementById('obraFim').value
+  );
+  const encBox = document.getElementById('encargos-box');
+  if (enc) {
+    document.getElementById('e-multa').textContent  = fmt(enc.multa);
+    document.getElementById('e-corr').textContent   = fmt(enc.correcao);
+    document.getElementById('e-mora').textContent   = fmt(enc.mora);
+    document.getElementById('e-total').textContent  = fmt(enc.total);
+    document.getElementById('e-meses').textContent  = enc.meses;
+    document.getElementById('e-meses2').textContent = enc.meses;
+    document.getElementById('e-selic-tag').textContent =
+      'SELIC utilizada: ' + (selicAnual * 100).toFixed(2).replace('.', ',') + '% a.a.';
+    encBox.style.display = 'block';
   } else {
-    concRow.style.display = 'none';
+    encBox.style.display = 'none';
   }
 
   // Trigger animations
